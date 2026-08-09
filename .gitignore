@@ -1,0 +1,67 @@
+# Operating System files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Database & Storage files
+*.db
+*.sqlite
+*.sqlite3
+*.store
+*.mdb
+
+# Model checkpoint & Saved Weights files
+*.h5
+*.hdf5
+*.pkl
+*.pickle
+*.pth
+*.pt
+*.onnx
+*.tflite
+*.pb
+*.bin
+*.pt.tar
+model_18.h5
+features.pkl
+tokenizer1.pkl
+
+# Dataset & Image Files
+Images/
+images/
+Flickr8k.token.txt
+Flickr_8k.testImages.txt
+Flickr_8k.trainImages.txt
+captions.txt
+descriptions.txt
+descriptions1.txt
+data/
+
+# Python Cache & Compiled Files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Jupyter Notebook & Checkpoints
+.ipynb_checkpoints/
+*-checkpoint.ipynb
+
+# Environment & Virtualenvs
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
