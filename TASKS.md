@@ -25,7 +25,7 @@
 - [x] **1.1** Create `.gitignore` to exclude `.DS_Store`, database files (`*.db`, `*.store`), model files (`*.h5`, `*.pkl`), and dataset directories (`Images/`, text files).
 - [x] **1.2** Create [PROJECT.md](file:///Users/adithyabandara/IDET/EndToEnd_Image_Captioning_Project/PROJECT.md) defining the IDET DL project scope, architecture, and dataset sources from [README.md](file:///Users/adithyabandara/IDET/EndToEnd_Image_Captioning_Project/README.md).
 - [x] **1.3** Create [TASKS.md](file:///Users/adithyabandara/IDET/EndToEnd_Image_Captioning_Project/TASKS.md) outlining the complete execution roadmap.
-- [ ] **1.4** Create `config/config.yaml` to centralize paths, batch sizes, image sizes (224x224), embedding dimensions (256), and training epochs.
+- [x] **1.4** Create `config/config.yaml` to centralize paths, batch sizes, image sizes (224x224), embedding dimensions (256), and training epochs.
 
 ---
 
