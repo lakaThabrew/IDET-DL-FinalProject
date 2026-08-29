@@ -13,6 +13,7 @@ Thumbs.db
 *.sqlite3
 *.store
 *.mdb
+logs/
 
 # Model checkpoint & Saved Weights files
 *.h5
@@ -29,6 +30,7 @@ Thumbs.db
 model_18.h5
 features.pkl
 tokenizer1.pkl
+models/training_history.csv
 
 # Dataset & Image Files
 Images/
@@ -39,7 +41,7 @@ Flickr_8k.trainImages.txt
 captions.txt
 descriptions.txt
 descriptions1.txt
-data/
+/data/
 
 # Python Cache & Compiled Files
 __pycache__/
@@ -64,4 +66,7 @@ venv.bak/
 .vscode/
 .idea/
 *.swp
-*.swo
+*.sw
+
+
+text.txt
