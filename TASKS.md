@@ -15,7 +15,7 @@
 - [x] **Task 6: Evaluation & Metrics (BLEU Score)**
 - [x] **Task 7: Inference Engine & Caption Generator**
 - [x] **Task 8: Streamlit Web Dashboard Modernization**
-- [ ] **Task 9: Automated Testing & Continuous Integration**
+- [x] **Task 9: Automated Testing & Continuous Integration**
 
 ---
 
@@ -82,3 +82,9 @@
 - [x] **8.4** Add confidence visualization / top-k word probabilities.
 
 ---
+
+### Task 9: Automated Testing & Continuous Integration
+- [x] **9.1** Write advanced `pytest` unit tests for data preprocessing (`test_preprocess.py`) and data generator (`test_data_generator.py`).
+- [x] **9.2** Implement mock testing for model inference and prediction loops (`test_inference.py`).
+- [x] **9.3** Implement Streamlit component testing to verify UI rendering (`test_streamlit_app.py`).
+- [x] **9.4** Configure GitHub Actions CI pipeline (`.github/workflows/ci.yml`) for linting (`flake8`, `black`) and coverage reporting (`pytest-cov`).
