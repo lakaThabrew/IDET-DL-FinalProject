@@ -7,6 +7,7 @@ from tensorflow.keras.applications.vgg16 import preprocess_input, VGG16
 from tensorflow.keras.models import Model
 from src.models.evaluate import generate_desc
 
+
 def extract_features_for_one_image(filename, vgg_model):
     image = load_img(filename, target_size=(224, 224))
     image = img_to_array(image)
@@ -15,17 +16,18 @@ def extract_features_for_one_image(filename, vgg_model):
     feature = vgg_model.predict(image, verbose=0)
     return feature
 
+
 def caption_new_image(image_path, model, tokenizer, max_length):
     vgg = VGG16()
     vgg_model = Model(inputs=vgg.inputs, outputs=vgg.layers[-2].output)
     feature = extract_features_for_one_image(image_path, vgg_model)
     caption = generate_desc(model, tokenizer, feature, max_length)
-    caption = caption.replace('startseq ', '').replace(' endseq', '').capitalize()
-    
+    caption = caption.replace("startseq ", "").replace(" endseq", "").capitalize()
+
     img = mpimg.imread(image_path)
     plt.figure(figsize=(6, 6))
     plt.imshow(img)
-    plt.axis('off')
-    plt.title(caption, fontsize=14, color='darkblue')
+    plt.axis("off")
+    plt.title(caption, fontsize=14, color="darkblue")
     plt.show()
     return caption

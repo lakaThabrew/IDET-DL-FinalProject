@@ -11,9 +11,13 @@ The project is built on the **Flickr8k** dataset and implements a "Merge Archite
 - **Progressive DataGenerator**: Uses a custom, scalable `tf.keras.utils.Sequence` generator to train on millions of image-word permutations without causing Out-of-Memory (OOM) crashes.
 - **Advanced Decoding strategies**: Supports both standard **Greedy Search** and high-accuracy **Beam Search** algorithms for text inference.
 - **Production-Ready**: Fully modularized Python architecture separating data pipelines, model building, and inference engines.
+- **Interactive Web Dashboard**: A modern, responsive Streamlit UI with drag-and-drop support, AI-generated captions, real-time token confidence visualization, and Text-to-Speech (TTS) integration.
+- **Robust CI/CD & Testing**: Comprehensive `pytest` suite with dependency mocking and a GitHub Actions pipeline enforcing code quality (`flake8`/`black`) and test coverage (Codecov).
 
 ## Project Structure
 ```text
+├── .github/                 # GitHub Actions CI/CD workflows
+├── app/                     # Streamlit web dashboard application
 ├── config/
 │   └── config.yaml          # Hyperparameters (epochs, batch_size, embedding_dim)
 ├── data/
@@ -29,6 +33,7 @@ The project is built on the **Flickr8k** dataset and implements a "Merge Archite
 │   ├── models/              # Model architecture definition and BLEU evaluation metrics
 │   ├── inference/           # Single-image prediction engine
 │   └── utils/               # Visualization and plotting helpers
+├── tests/                   # Advanced pytest unit tests (mocking, generator tests, UI tests)
 ├── train.py                 # Main CLI training script
 ├── evaluate.py              # Main CLI evaluation script
 ├── infer.py                 # CLI inference script for new images
@@ -78,6 +83,18 @@ To test the trained model on a brand new image, use the `infer.py` script and pa
 python infer.py data/example/image1.jpg
 ```
 *This will extract features on the fly, run the language decoder, and open a window displaying your image alongside its AI-generated caption.*
+
+### 4. Interactive Web Dashboard
+Experience the model interactively through a highly polished web UI. The dashboard features image uploads, a sample gallery, token-level confidence metrics, and Text-to-Speech (TTS).
+```bash
+python -m streamlit run app/streamlit_app.py
+```
+
+### 5. Running Tests
+The project includes a robust test suite covering text preprocessing, data generation, inference logic mocking, and the Streamlit UI fallback handling.
+```bash
+pytest tests/ -v --cov
+```
 
 ## Results & Performance
 - The model achieves highly competitive BLEU scores on the standardized Flickr8k test split.

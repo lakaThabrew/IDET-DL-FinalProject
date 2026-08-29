@@ -8,3 +8,10 @@ seaborn
 wordcloud
 jupyter
 Pillow
+streamlit
+gTTS
+pytest
+pytest-cov
+pytest-mock
+flake8
+black
