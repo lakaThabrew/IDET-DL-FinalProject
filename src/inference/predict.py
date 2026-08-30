@@ -31,3 +31,28 @@ def caption_new_image(image_path, model, tokenizer, max_length):
     plt.title(caption, fontsize=14, color="darkblue")
     plt.show()
     return caption
+
+
+def main():
+    import sys
+    import pickle
+    from tensorflow.keras.models import load_model
+
+    if len(sys.argv) < 2:
+        print("Usage: python -m src.inference.predict <path_to_image>")
+        sys.exit(1)
+
+    image_path = sys.argv[1]
+
+    with open("models/tokenizer.pkl", "rb") as f:
+        tokenizer = pickle.load(f)
+    model = load_model("models/best_model.h5")
+    max_length = 34
+
+    print(f"Generating caption for {image_path}...")
+    caption = caption_new_image(image_path, model, tokenizer, max_length)
+    print(f"Caption: {caption}")
+
+
+if __name__ == "__main__":
+    main()

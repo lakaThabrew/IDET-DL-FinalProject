@@ -9,8 +9,9 @@ from tensorflow.keras.callbacks import (
     CSVLogger,
 )
 
-from src.data.dataset import DataGenerator, load_doc
-from src.models.model import define_model
+from src.models.data_generator import DataGenerator
+from src.utils.file_utils import load_doc
+from src.models.merge_model import define_model
 
 
 def main():
@@ -30,8 +31,6 @@ def main():
         tokenizer = pickle.load(f)
 
     vocab_size = len(tokenizer.word_index) + 1
-    # Find max length from config or dynamically
-    # For now, default to 34 based on flickr8k
     max_length = 34
 
     train_image_ids = load_doc("data/raw/Flickr_8k.trainImages.txt").split("\n")
