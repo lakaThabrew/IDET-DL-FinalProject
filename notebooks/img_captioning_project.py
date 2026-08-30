@@ -3,9 +3,9 @@
 
 # # End-to-End Image Captioning System
 # ### Hybrid Deep Learning Architecture (CNN + LSTM Encoder-Decoder)
-# 
+#
 # ---
-# 
+#
 # ## Project Overview & Objectives
 # This project implements an end-to-end Image Captioning model using the [Flickr8k Dataset (Kaggle)](https://www.kaggle.com/datasets/adityajn105/flickr8k) / [GitHub Dataset Release](https://github.com/jbrownlee/Datasets/releases/tag/Flickr8k).
 # The system combines:
@@ -41,11 +41,11 @@ from keras.layers import Dropout
 from tensorflow.keras.layers import Add
 from keras.callbacks import ModelCheckpoint
 
-
 # In[42]:
 
 
 from keras.applications.vgg16 import VGG16, preprocess_input
+
 model = VGG16()
 # re-structure the model
 model = Model(inputs=model.inputs, outputs=model.layers[-2].output)
@@ -61,28 +61,29 @@ from pickle import dump
 from tensorflow.keras.preprocessing.image import img_to_array, load_img
 from keras.models import Model
 
+
 # extract feature from each photo in directory
 def extract_features(directory):
-	# extract features from each photo
-	features = dict()
-	for name in listdir(directory):
-		# load an image from file
-		filename = directory + '/' + name
-		image = load_img(filename, target_size=(224, 224))
-		# convert the image pixels to a numpy array
-		image = img_to_array(image)
-		# reshape data for the model
-		image = image.reshape((1, image.shape[0], image.shape[1], image.shape[2]))
-		# prepare the image for the VGG model
-		image = preprocess_input(image)
-		# get features
-		feature = model.predict(image, verbose=0)
-		# get image id
-		image_id = name.split('.')[0]
-		# store feature
-		features[image_id] = feature
-		print('>%s' % name)
-	return features
+    # extract features from each photo
+    features = dict()
+    for name in listdir(directory):
+        # load an image from file
+        filename = directory + "/" + name
+        image = load_img(filename, target_size=(224, 224))
+        # convert the image pixels to a numpy array
+        image = img_to_array(image)
+        # reshape data for the model
+        image = image.reshape((1, image.shape[0], image.shape[1], image.shape[2]))
+        # prepare the image for the VGG model
+        image = preprocess_input(image)
+        # get features
+        feature = model.predict(image, verbose=0)
+        # get image id
+        image_id = name.split(".")[0]
+        # store feature
+        features[image_id] = feature
+        print(">%s" % name)
+    return features
 
 
 # In[44]:
@@ -107,9 +108,10 @@ def extract_features(directory):
 import string
 from nltk.tokenize import word_tokenize
 
+
 def load_doc(filename):
     # open the file as read only
-    file = open(filename, 'r')
+    file = open(filename, "r")
     # read all text
     text = file.read()
     # close the file
@@ -121,25 +123,25 @@ def load_doc(filename):
 
 
 def load_descriptions(doc):
-	mapping = dict()
-	# process lines
-	for line in doc.split('\n'):
-		# split line by white space
-		tokens = line.split()
-		if len(line) < 2:
-			continue
-		# take the first token as the image id, the rest as the description
-		image_id, image_desc = tokens[0], tokens[1:]
-		# remove filename from image id
-		image_id = image_id.split('.')[0]
-		# convert description tokens back to string
-		image_desc = ' '.join(image_desc)
-		# create the list if needed
-		if image_id not in mapping:
-			mapping[image_id] = list()
-		# store description
-		mapping[image_id].append(image_desc)
-	return mapping
+    mapping = dict()
+    # process lines
+    for line in doc.split("\n"):
+        # split line by white space
+        tokens = line.split()
+        if len(line) < 2:
+            continue
+        # take the first token as the image id, the rest as the description
+        image_id, image_desc = tokens[0], tokens[1:]
+        # remove filename from image id
+        image_id = image_id.split(".")[0]
+        # convert description tokens back to string
+        image_desc = " ".join(image_desc)
+        # create the list if needed
+        if image_id not in mapping:
+            mapping[image_id] = list()
+        # store description
+        mapping[image_id].append(image_desc)
+    return mapping
 
 
 # In[47]:
@@ -147,7 +149,7 @@ def load_descriptions(doc):
 
 def clean_descriptions(descriptions):
     # prepare translation table for removing punctuation
-    table = str.maketrans('', '', string.punctuation)
+    table = str.maketrans("", "", string.punctuation)
     for key, desc_list in descriptions.items():
         for i in range(len(desc_list)):
             desc = desc_list[i]
@@ -158,11 +160,13 @@ def clean_descriptions(descriptions):
             # remove punctuation from each token
             desc = [w.translate(table) for w in desc]
             # remove hanging 's' and 'a'
-            desc = [word for word in desc if len(word)>1]
+            desc = [word for word in desc if len(word) > 1]
             # remove tokens with numbers in them
             desc = [word for word in desc if word.isalpha()]
             # store as string
-            desc_list[i] =  ' '.join(desc)
+            desc_list[i] = " ".join(desc)
+
+
 def to_vocabulary(descriptions):
     # build a list of all description strings
     all_desc = set()
@@ -179,8 +183,8 @@ def save_descriptions(descriptions, filename):
     for key, desc_list in descriptions.items():
         for desc in desc_list:
             lines.append(key + " " + desc)
-    data = '\n'.join(lines)
-    file = open(filename, 'w')
+    data = "\n".join(lines)
+    file = open(filename, "w")
     file.write(data)
     file.close()
 
@@ -189,7 +193,8 @@ def save_descriptions(descriptions, filename):
 
 
 import nltk
-nltk.download('punkt')
+
+nltk.download("punkt")
 
 
 # In[50]:
@@ -198,16 +203,16 @@ nltk.download('punkt')
 filename = "Flickr8k.token.txt"
 doc = load_doc(filename)
 descriptions = load_descriptions(doc)
-print("Loaded: %d" %len(descriptions))
+print("Loaded: %d" % len(descriptions))
 
 
 # In[51]:
 
 
-#clean desc
+# clean desc
 clean_descriptions(descriptions)
 vocab = to_vocabulary(descriptions)
-print("Vocab size: %d" %len(vocab))
+print("Vocab size: %d" % len(vocab))
 
 
 # In[52]:
@@ -221,24 +226,26 @@ print("Vocab size: %d" %len(vocab))
 
 from pickle import dump
 
-#load into memory
-def load_doc(filename):
-	# open the file as read only
-	file = open(filename, 'r')
-	# read all text
-	text = file.read()
-	# close the file
-	file.close()
-	return text
 
-#pre-defined list of photo identifier
+# load into memory
+def load_doc(filename):
+    # open the file as read only
+    file = open(filename, "r")
+    # read all text
+    text = file.read()
+    # close the file
+    file.close()
+    return text
+
+
+# pre-defined list of photo identifier
 def load_set(filename):
     doc = load_doc(filename)
     dataset = list()
     for line in doc.split("\n"):
         if len(line) < 1:
             continue
-        identifier = line.split('.')[0]
+        identifier = line.split(".")[0]
         dataset.append(identifier)
     return set(dataset)
 
@@ -248,18 +255,18 @@ def load_set(filename):
 # - **Training Set**: 6,000 images (`Flickr_8k.trainImages.txt`)
 # - **Test Set**: 1,000 images (`Flickr_8k.testImages.txt`)
 # - **Validation Set**: 1,000 images
-# 
+#
 # Special sequence indicators added:
 # - `startseq`: Marks the start of a caption sequence.
 # - `endseq`: Marks the end of a caption sequence.
-# 
+#
 # A **Keras Tokenizer** is fit on the training captions to convert text words into integer sequences and saved as `tokenizer1.pkl`.
 
 # In[54]:
 
 
 def load_photo_features(features, dataset):
-    all_features = load(open(features, 'rb'))
+    all_features = load(open(features, "rb"))
     features = {k: all_features[k] for k in dataset}
     return features
 
@@ -268,24 +275,24 @@ def load_photo_features(features, dataset):
 
 
 def load_clean_descriptions(filename, dataset):
-	# load document
-	doc = load_doc(filename)
-	descriptions = dict()
-	for line in doc.split('\n'):
-		# split line by white space
-		tokens = line.split()
-		# split id from description
-		image_id, image_desc = tokens[0], tokens[1:]
-		# skip images not in the set
-		if image_id in dataset:
-			# create list
-			if image_id not in descriptions:
-				descriptions[image_id] = list()
-			# wrap description in tokens
-			desc = 'startseq ' + ' '.join(image_desc) + ' endseq'
-			# store
-			descriptions[image_id].append(desc)
-	return descriptions
+    # load document
+    doc = load_doc(filename)
+    descriptions = dict()
+    for line in doc.split("\n"):
+        # split line by white space
+        tokens = line.split()
+        # split id from description
+        image_id, image_desc = tokens[0], tokens[1:]
+        # skip images not in the set
+        if image_id in dataset:
+            # create list
+            if image_id not in descriptions:
+                descriptions[image_id] = list()
+            # wrap description in tokens
+            desc = "startseq " + " ".join(image_desc) + " endseq"
+            # store
+            descriptions[image_id].append(desc)
+    return descriptions
 
 
 # In[56]:
@@ -294,28 +301,28 @@ def load_clean_descriptions(filename, dataset):
 from pickle import load
 
 # load training dataset (6K)
-filename = 'Flickr_8k.trainImages.txt'
+filename = "Flickr_8k.trainImages.txt"
 train = load_set(filename)
-print('Dataset: %d' % len(train))
+print("Dataset: %d" % len(train))
 # descriptions
-train_descriptions = load_clean_descriptions('descriptions1.txt', train)
-print('Descriptions: train=%d' % len(train_descriptions))
+train_descriptions = load_clean_descriptions("descriptions1.txt", train)
+print("Descriptions: train=%d" % len(train_descriptions))
 # photo features
-train_features = load_photo_features('features.pkl', train)
-print('Photos: train=%d' % len(train_features))
+train_features = load_photo_features("features.pkl", train)
+print("Photos: train=%d" % len(train_features))
 
 
 # In[57]:
 
 
 def load_doc(filename):
-	# open the file as read only
-	file = open(filename, 'r')
-	# read all text
-	text = file.read()
-	# close the file
-	file.close
-	return text
+    # open the file as read only
+    file = open(filename, "r")
+    # read all text
+    text = file.read()
+    # close the file
+    file.close
+    return text
 
 
 # In[58]:
@@ -327,7 +334,7 @@ def load_set(filename):
     for line in doc.split("\n"):
         if len(line) < 1:
             continue
-        identifier = line.split('.')[0]
+        identifier = line.split(".")[0]
         dataset.append(identifier)
     return set(dataset)
 
@@ -336,35 +343,35 @@ def load_set(filename):
 
 
 def load_clean_descriptions(filename, dataset):
-	# load document
-	doc = load_doc(filename)
-	descriptions = dict()
-	for line in doc.split('\n'):
-		# split line by white space
-		tokens = line.split()
-		# split id from description
-		image_id, image_desc = tokens[0], tokens[1:]
-		# skip images not in the set
-		if image_id in dataset:
-			# create list
-			if image_id not in descriptions:
-				descriptions[image_id] = list()
-			# wrap description in tokens
-			desc = 'startseq ' + ' '.join(image_desc) + ' endseq'
-			# store
-			descriptions[image_id].append(desc)
-	return descriptions 
+    # load document
+    doc = load_doc(filename)
+    descriptions = dict()
+    for line in doc.split("\n"):
+        # split line by white space
+        tokens = line.split()
+        # split id from description
+        image_id, image_desc = tokens[0], tokens[1:]
+        # skip images not in the set
+        if image_id in dataset:
+            # create list
+            if image_id not in descriptions:
+                descriptions[image_id] = list()
+            # wrap description in tokens
+            desc = "startseq " + " ".join(image_desc) + " endseq"
+            # store
+            descriptions[image_id].append(desc)
+    return descriptions
 
 
 # In[60]:
 
 
 def load_photo_features(filename, dataset):
-	# load all features
-	all_features = load(open(filename, 'rb'))
-	# filter features
-	features = {k: all_features[k] for k in dataset}
-	return features
+    # load all features
+    all_features = load(open(filename, "rb"))
+    # filter features
+    features = {k: all_features[k] for k in dataset}
+    return features
 
 
 # In[61]:
@@ -377,6 +384,7 @@ def to_lines(descriptions):
         [all_desc.append(d) for d in descriptions[key]]
     return all_desc
 
+
 def create_tokenizer(descriptions):
     lines = to_lines(descriptions)
     tokenizer = Tokenizer()
@@ -387,7 +395,7 @@ def create_tokenizer(descriptions):
 # In[62]:
 
 
-#len of description
+# len of description
 def max_length(description):
     lines = to_lines(description)
     return max(len(d.split()) for d in lines)
@@ -422,23 +430,25 @@ def create_sequences(tokenizer, max_length, desc_list, photo):
 
 
 from tensorflow.keras.layers import add
+
+
 def define_model(vocab_size, max_length):
     # feature extractor model
     inputs1 = Input(shape=(1000,))
     fe1 = Dropout(0.5)(inputs1)
-    fe2 = Dense(256, activation='relu')(fe1)
+    fe2 = Dense(256, activation="relu")(fe1)
     # sequence model
     inputs2 = Input(shape=(max_length,))
-    se1 = Embedding(vocab_size,output_dim=256, mask_zero=True)(inputs2)
+    se1 = Embedding(vocab_size, output_dim=256, mask_zero=True)(inputs2)
     se2 = Dropout(0.5)(se1)
     se3 = LSTM(256)(se2)
     # decoder model
     decoder1 = add([fe2, se3])
-    decoder2 = Dense(256, activation='relu')(decoder1)
-    outputs = Dense(vocab_size, activation='softmax')(decoder2)
+    decoder2 = Dense(256, activation="relu")(decoder1)
+    outputs = Dense(vocab_size, activation="softmax")(decoder2)
     # tie it together [image, seq] [word]
     model = Model(inputs=[inputs1, inputs2], outputs=outputs)
-    model.compile(loss='categorical_crossentropy', optimizer='adam')
+    model.compile(loss="categorical_crossentropy", optimizer="adam")
     # summarize model
     print(model.summary())
     return model
@@ -454,34 +464,36 @@ def data_generator(descriptions, photos, tokenizer, max_length):
         for key, desc_list in descriptions.items():
             # retrieve the photo feature
             photo = photos[key][0]
-            in_img, in_seq, out_word = create_sequences(tokenizer, max_length, desc_list, photo)
+            in_img, in_seq, out_word = create_sequences(
+                tokenizer, max_length, desc_list, photo
+            )
             yield [[in_img, in_seq], out_word]
 
 
 # ## Deep Learning Model Architecture (Merge Model Framework)
-# 
+#
 # The model follows the **Merge Architecture Paradigm** (Tanti et al., 2017):
-# 
+#
 # ### Model Components Breakdown
-# 
+#
 # #### 1. CNN Image Feature Extractor (Image Encoder)
 # - **Base Model**: VGG16 pre-trained on ImageNet.
 # - **Input**: Preprocessed image tensor of shape `(224, 224, 3)`.
 # - **Extracted Feature**: 4,096-dimensional feature vector from the FC2 layer.
 # - **Layer Sequence**: `Input(4096) -> Dropout(0.5) -> Dense(256, activation='relu')`.
-# 
+#
 # #### 2. RNN Language Sequence Processor (Text Decoder)
 # - **Input**: Integer-encoded token sequence of length `max_length = 34`.
 # - **Embedding Layer**: Maps integer tokens into a 256-dimensional vector space (`vocab_size = 7579`, `output_dim = 256`, `mask_zero=True`).
 # - **Layer Sequence**: `Input(34) -> Embedding(7579, 256) -> Dropout(0.5) -> LSTM(256)`.
-# 
+#
 # #### 3. Joint Decoder & Softmax Output Classifier (Fusion Layer)
 # - **Feature Fusion**: `Add([Image_Dense_256, Text_LSTM_256])` combines visual and linguistic representations into a joint 256-dim vector.
 # - **Decoder Dense Layer**: `Dense(256, activation='relu')` extracts non-linear representations.
 # - **Output Softmax Layer**: `Dense(7579, activation='softmax')` outputs probability distribution over all 7,579 vocabulary words to predict the next word.
-# 
+#
 # ### Model Layers & Parameters Summary
-# 
+#
 # | Sub-Network | Layer Name | Input Shape | Output Shape | Parameters |
 # | :--- | :--- | :--- | :--- | :--- |
 # | Image Feature | Input_2 (Dense Input) | (None, 4096) | (None, 4096) | 0 |
@@ -495,34 +507,35 @@ def data_generator(descriptions, photos, tokenizer, max_length):
 # | Decoder | Dense_2 (Decoder) | (None, 256) | (None, 256) | 65,792 |
 # | Decoder | Dense_3 (Output Vocabulary) | (None, 256) | (None, 7579) | 1,947,803 |
 # | **Total** | **5,527,963 Parameters** | | | **~21.09 MB** |
-# 
+#
 # ### Training Strategy
 # - **Optimizer**: Adam Optimizer (`learning_rate=0.001`).
 # - **Loss Function**: Categorical Crossentropy.
 # - **Data Feeding**: Batch generator (`data_generator`) yielding `([X_image, X_sequence], Y_next_word)` tuples dynamically to optimize memory consumption.
-# 
+#
 
 # In[66]:
 
 
-#load train dataset
+# load train dataset
 import tensorflow as tf
+
 filename = "Flickr_8k.trainImages.txt"
 train = load_set(filename)
-print("Dataset: %d" %len(train))
+print("Dataset: %d" % len(train))
 
 train_descriptions = load_clean_descriptions("descriptions1.txt", train)
-print("train_descriptions= %d" %len(train_descriptions))
+print("train_descriptions= %d" % len(train_descriptions))
 
 train_feature = load_photo_features("features.pkl", train)
-print("photos: train= %d" %len(train_feature))
+print("photos: train= %d" % len(train_feature))
 
 tokenizer = create_tokenizer(train_descriptions)
-vocab_size = len(tokenizer.word_index)+1
-print("Vocab size: %d" %vocab_size)
+vocab_size = len(tokenizer.word_index) + 1
+print("Vocab size: %d" % vocab_size)
 
 max_length = max_length(train_descriptions)
-print('Description Length: %d' % max_length)
+print("Description Length: %d" % max_length)
 
 
 # In[67]:
@@ -531,14 +544,14 @@ print('Description Length: %d' % max_length)
 import pickle
 
 # Dump the tokenizer using pickle
-with open('tokenizer1.pkl', 'wb') as f:
+with open("tokenizer1.pkl", "wb") as f:
     pickle.dump(tokenizer, f)
 
 
 # In[68]:
 
 
-#train model
+# train model
 # model = define_model(vocab_size, max_length)
 # filename = "model_18.h5"
 # model = load_model(filename)
@@ -561,64 +574,69 @@ with open('tokenizer1.pkl', 'wb') as f:
 
 
 def load_doc(filename):
-	# open the file as read only
-	file = open(filename, 'r')
-	# read all text
-	text = file.read()
-	# close the file
-	file.close()
-	return text
+    # open the file as read only
+    file = open(filename, "r")
+    # read all text
+    text = file.read()
+    # close the file
+    file.close()
+    return text
+
 
 # load a pre-defined list of photo identifiers
 def load_set(filename):
-	doc = load_doc(filename)
-	dataset = list()
-	# process line by line
-	for line in doc.split('\n'):
-		# skip empty lines
-		if len(line) < 1:
-			continue
-		# get the image identifier
-		identifier = line.split('.')[0]
-		dataset.append(identifier)
-	return set(dataset)
+    doc = load_doc(filename)
+    dataset = list()
+    # process line by line
+    for line in doc.split("\n"):
+        # skip empty lines
+        if len(line) < 1:
+            continue
+        # get the image identifier
+        identifier = line.split(".")[0]
+        dataset.append(identifier)
+    return set(dataset)
 
 
 # In[71]:
 
 
 def load_photo_features(filename, dataset):
-	# load all features
-	all_features = load(open(filename, 'rb'))
-	# filter features
-	features = {k: all_features[k] for k in dataset}
-	return features
+    # load all features
+    all_features = load(open(filename, "rb"))
+    # filter features
+    features = {k: all_features[k] for k in dataset}
+    return features
+
 
 # covert a dictionary of clean descriptions to a list of descriptions
 def to_lines(descriptions):
-	all_desc = list()
-	for key in descriptions.keys():
-		[all_desc.append(d) for d in descriptions[key]]
-	return all_desc
+    all_desc = list()
+    for key in descriptions.keys():
+        [all_desc.append(d) for d in descriptions[key]]
+    return all_desc
+
 
 # fit a tokenizer given caption descriptions
 def create_tokenizer(descriptions):
-	lines = to_lines(descriptions)
-	tokenizer = Tokenizer()
-	tokenizer.fit_on_texts(lines)
-	return tokenizer
+    lines = to_lines(descriptions)
+    tokenizer = Tokenizer()
+    tokenizer.fit_on_texts(lines)
+    return tokenizer
+
 
 # calculate the length of the description with the most words
 def max_length(descriptions):
-	lines = to_lines(descriptions)
-	return max(len(d.split()) for d in lines)
+    lines = to_lines(descriptions)
+    return max(len(d.split()) for d in lines)
+
 
 # map an integer to a word
 def word_for_id(integer, tokenizer):
-	for word, index in tokenizer.word_index.items():
-		if index == integer:
-			return word
-	return None 
+    for word, index in tokenizer.word_index.items():
+        if index == integer:
+            return word
+    return None
 
 
 # In[72]:
@@ -626,30 +644,32 @@ def word_for_id(integer, tokenizer):
 
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 import numpy as np
+
+
 def generate_desc(model, tokenizer, photo, max_length):
-	# seed the generation process
-	in_text = 'startseq'
-	# iterate over the whole length of the sequence
-	for i in range(max_length):
-		# integer encode input sequence
-		sequence = tokenizer.texts_to_sequences([in_text])[0]
-		# pad input
-		sequence = pad_sequences([sequence], maxlen=max_length)
-		# predict next word
-		yhat = model.predict([photo,sequence], verbose=0)
-		# convert probability to integer
-		yhat = np.argmax(yhat)
-		# map integer to word
-		word = word_for_id(yhat, tokenizer)
-		# stop if we cannot map the word
-		if word is None:
-			break
-		# append as input for generating the next word
-		in_text += ' ' + word
-		# stop if we predict the end of the sequence
-		if word == 'endseq':
-			break
-	return in_text
+    # seed the generation process
+    in_text = "startseq"
+    # iterate over the whole length of the sequence
+    for i in range(max_length):
+        # integer encode input sequence
+        sequence = tokenizer.texts_to_sequences([in_text])[0]
+        # pad input
+        sequence = pad_sequences([sequence], maxlen=max_length)
+        # predict next word
+        yhat = model.predict([photo, sequence], verbose=0)
+        # convert probability to integer
+        yhat = np.argmax(yhat)
+        # map integer to word
+        word = word_for_id(yhat, tokenizer)
+        # stop if we cannot map the word
+        if word is None:
+            break
+        # append as input for generating the next word
+        in_text += " " + word
+        # stop if we predict the end of the sequence
+        if word == "endseq":
+            break
+    return in_text
 
 
 # In[73]:
@@ -657,44 +677,49 @@ def generate_desc(model, tokenizer, photo, max_length):
 
 # evaluated the skill of model
 from nltk.translate.bleu_score import corpus_bleu
+
+
 def evaluate_model(model, descriptions, photos, tokenizer, max_length):
-	actual, predicted = list(), list()
-	# step over the whole set
-	for key, desc_list in descriptions.items():
-		# generate description
-		yhat = generate_desc(model, tokenizer, photos[key], max_length)
-		# store actual and predicted
-		references = [d.split() for d in desc_list]
-		actual.append(references)
-		predicted.append(yhat.split())
-	# calculate BLEU score
-	print('BLEU-1: %f' % corpus_bleu(actual, predicted, weights=(1.0, 0, 0, 0)))
-	print('BLEU-2: %f' % corpus_bleu(actual, predicted, weights=(0.5, 0.5, 0, 0)))
-	print('BLEU-3: %f' % corpus_bleu(actual, predicted, weights=(0.3, 0.3, 0.3, 0)))
-	print('BLEU-4: %f' % corpus_bleu(actual, predicted, weights=(0.25, 0.25, 0.25, 0.25)))
+    actual, predicted = list(), list()
+    # step over the whole set
+    for key, desc_list in descriptions.items():
+        # generate description
+        yhat = generate_desc(model, tokenizer, photos[key], max_length)
+        # store actual and predicted
+        references = [d.split() for d in desc_list]
+        actual.append(references)
+        predicted.append(yhat.split())
+    # calculate BLEU score
+    print("BLEU-1: %f" % corpus_bleu(actual, predicted, weights=(1.0, 0, 0, 0)))
+    print("BLEU-2: %f" % corpus_bleu(actual, predicted, weights=(0.5, 0.5, 0, 0)))
+    print("BLEU-3: %f" % corpus_bleu(actual, predicted, weights=(0.3, 0.3, 0.3, 0)))
+    print(
+        "BLEU-4: %f" % corpus_bleu(actual, predicted, weights=(0.25, 0.25, 0.25, 0.25))
+    )
 
 
 # In[74]:
 
 
-#load train dataset
+# load train dataset
 import tensorflow as tf
+
 filename = "Flickr_8k.trainImages.txt"
 train = load_set(filename)
-print("Dataset: %d" %len(train))
+print("Dataset: %d" % len(train))
 
 train_descriptions = load_clean_descriptions("descriptions.txt", train)
-print("train_descriptions= %d" %len(train_descriptions))
+print("train_descriptions= %d" % len(train_descriptions))
 
 train_feature = load_photo_features("features.pkl", train)
-print("photos: train= %d" %len(train_feature))
+print("photos: train= %d" % len(train_feature))
 
 tokenizer = create_tokenizer(train_descriptions)
-vocab_size = len(tokenizer.word_index)+1
-print("Vocab size: %d" %vocab_size)
+vocab_size = len(tokenizer.word_index) + 1
+print("Vocab size: %d" % vocab_size)
 
 max_length = max_length(train_descriptions)
-print('Description Length: %d' % max_length)
+print("Description Length: %d" % max_length)
 
 
 # ## Step 5: Model Evaluation (BLEU Score)
@@ -705,13 +730,14 @@ print('Description Length: %d' % max_length)
 
 filename = "Flickr_8k.testImages.txt"
 test = load_set(filename)
-print("Dataset: %d" %len(test))
+print("Dataset: %d" % len(test))
 test_description = load_clean_descriptions("descriptions.txt", test)
-print("Description= %d" %len(test_description))
+print("Description= %d" % len(test_description))
 test_features = load_photo_features("features.pkl", test)
 print("photos: test=%d" % len(test_features))
 
 from keras.models import load_model
+
 filename = "model_18.h5"
 model = load_model(filename, compile=False)
 
@@ -734,6 +760,7 @@ from tensorflow.keras.preprocessing.image import img_to_array
 from keras.applications.vgg16 import preprocess_input
 from keras.models import Model
 from keras.models import load_model
+
 # from keras.preprocessing.text import Tokenizer
 
 
@@ -741,21 +768,21 @@ from keras.models import load_model
 
 
 def extract_features(filename):
-	# load the model
-	model = VGG16()
-	# re-structure the model
-	model = Model(inputs=model.inputs, outputs=model.layers[-2].output)
-	# load the photo
-	image = load_img(filename, target_size=(224, 224))
-	# convert the image pixels to a numpy array
-	image = img_to_array(image)
-	# reshape data for the model
-	image = image.reshape((1, image.shape[0], image.shape[1], image.shape[2]))
-	# prepare the image for the VGG model
-	image = preprocess_input(image)
-	# get features
-	feature = model.predict(image, verbose=0)
-	return feature
+    # load the model
+    model = VGG16()
+    # re-structure the model
+    model = Model(inputs=model.inputs, outputs=model.layers[-2].output)
+    # load the photo
+    image = load_img(filename, target_size=(224, 224))
+    # convert the image pixels to a numpy array
+    image = img_to_array(image)
+    # reshape data for the model
+    image = image.reshape((1, image.shape[0], image.shape[1], image.shape[2]))
+    # prepare the image for the VGG model
+    image = preprocess_input(image)
+    # get features
+    feature = model.predict(image, verbose=0)
+    return feature
 
 
 # In[79]:
@@ -764,9 +791,9 @@ def extract_features(filename):
 from pickle import load
 from tensorflow.keras.preprocessing.text import Tokenizer
 
-tokenizer = load(open('tokenizer1.pkl', 'rb'))
+tokenizer = load(open("tokenizer1.pkl", "rb"))
 max_len = 34
-model = load_model('model_18.h5', compile=False)
+model = load_model("model_18.h5", compile=False)
 photo = extract_features("Images/101654506_8eb26cfb60.jpg")
 tokenizer.analyzer = None
 description = generate_desc(model, tokenizer, photo, max_len)
@@ -784,11 +811,11 @@ print(description)
 
 
 query = description
-stopwords = ['startseq','endseq']
+stopwords = ["startseq", "endseq"]
 querywords = query.split()
 
-resultwords  = [word for word in querywords if word.lower() not in stopwords]
-result = ' '.join(resultwords)
+resultwords = [word for word in querywords if word.lower() not in stopwords]
+result = " ".join(resultwords)
 
 print(result)
 
@@ -796,11 +823,8 @@ print(result)
 # In[ ]:
 
 
-
-
-
 # ## Final Conclusion & Summary
-# 
+#
 # ### Key Takeaways:
 # 1. **Feature Extraction**: Pre-trained VGG16 successfully compressed high-resolution images into compact 4096-dimensional embeddings.
 # 2. **Text Processing**: Vocabulary size was reduced to 7,579 words after removing punctuation and numerical noise.
