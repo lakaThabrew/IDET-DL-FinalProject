@@ -26,6 +26,9 @@
 - [x] **1.2** Create [PROJECT.md](file:///Users/adithyabandara/IDET/EndToEnd_Image_Captioning_Project/PROJECT.md) defining the IDET DL project scope, architecture, and dataset sources from [README.md](file:///Users/adithyabandara/IDET/EndToEnd_Image_Captioning_Project/README.md).
 - [x] **1.3** Create [TASKS.md](file:///Users/adithyabandara/IDET/EndToEnd_Image_Captioning_Project/TASKS.md) outlining the complete execution roadmap.
 - [x] **1.4** Create `config/config.yaml` to centralize paths, batch sizes, image sizes (224x224), embedding dimensions (256), and training epochs.
+- [x] **1.5** Create `requirements.txt` to maintain project dependencies.
+- [x] **1.6** Move original notebooks to `notebooks/` and export scripts.
+- [x] **1.7** Create `__init__.py` files across all `src` subdirectories.
 
 ---
 

@@ -26,17 +26,16 @@ The project is built on the **Flickr8k** dataset and implements a "Merge Archite
 │   └── example/             # Example images for manual testing
 ├── models/                  # Saved model checkpoints (best_model.h5) & tokenizer.pkl
 ├── notebooks/
-│   └── End_to_End_Image_Captioning.ipynb # Original exploratory & visualization notebook
+│   ├── End_to_End_Image_Captioning.ipynb # Original exploratory & visualization notebook
+│   ├── img_captioning_project.ipynb      # Main development notebook
+│   └── img_captioning_project.py         # Generated script version
 ├── src/
-│   ├── data/                # Text preprocessing and data generators
-│   ├── features/            # VGG16 extraction scripts
-│   ├── models/              # Model architecture definition and BLEU evaluation metrics
+│   ├── data/                # Text preprocessing, ingestion & cleaning
+│   ├── features/            # VGG16 extraction scripts & Tokenizer
+│   ├── models/              # Model architecture (Merge Model), Generators, Training & Evaluation
 │   ├── inference/           # Single-image prediction engine
-│   └── utils/               # Visualization and plotting helpers
+│   └── utils/               # File handlers and helper utilities
 ├── tests/                   # Advanced pytest unit tests (mocking, generator tests, UI tests)
-├── train.py                 # Main CLI training script
-├── evaluate.py              # Main CLI evaluation script
-├── infer.py                 # CLI inference script for new images
 └── requirements.txt         # Python dependency list
 ```
 
@@ -44,7 +43,7 @@ The project is built on the **Flickr8k** dataset and implements a "Merge Archite
 
 1. **Clone the repository:**
    ```bash
-   git clone <your-repository-url>
+   git clone https://github.com/lakaThabrew/IDET-DL-FinalProject
    cd IDET-DL-FinalProject
    ```
 
@@ -65,22 +64,23 @@ The project is built on the **Flickr8k** dataset and implements a "Merge Archite
 ## Usage Guide
 
 ### 1. Training the Model
-To train the model from scratch, simply execute the `train.py` script. Hyperparameters (like epochs and batch size) are dynamically controlled via `config/config.yaml`.
+To train the model from scratch, execute the train script as a module. Hyperparameters (like epochs and batch size) are dynamically controlled via `config/config.yaml`.
 ```bash
-python train.py
+python -m src.models.train
 ```
 *This script will automatically load the dataset, initialize the data generator, train the neural network, and save the best checkpoint to `models/best_model.h5`.*
 
 ### 2. Evaluating the Model
 To calculate standard NLP metrics (BLEU-1 to BLEU-4) and compare Greedy Search vs Beam Search performance on the test set:
 ```bash
-python evaluate.py
+python -m src.models.evaluate
 ```
+*This will output the BLEU scores to the console and also save them to `models/evaluation_metrics.json` for later analysis.*
 
 ### 3. Inference (Caption Your Own Images)
-To test the trained model on a brand new image, use the `infer.py` script and pass the absolute or relative path to your image:
+To test the trained model on a brand new image, use the inference script and pass the absolute or relative path to your image:
 ```bash
-python infer.py data/example/image1.jpg
+python -m src.inference.predict data/example/image1.jpg
 ```
 *This will extract features on the fly, run the language decoder, and open a window displaying your image alongside its AI-generated caption.*
 

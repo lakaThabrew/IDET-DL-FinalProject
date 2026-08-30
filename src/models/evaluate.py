@@ -89,3 +89,47 @@ def evaluate_model(
     b4 = corpus_bleu(actual, predicted, weights=(0.25, 0.25, 0.25, 0.25))
 
     return {"BLEU-1": b1, "BLEU-2": b2, "BLEU-3": b3, "BLEU-4": b4}
+
+
+def main():
+    import pickle
+    import json
+    from tensorflow.keras.models import load_model
+    from src.utils.file_utils import load_doc
+
+    print("Loading data...")
+    with open("data/processed/descriptions.json", "r") as f:
+        descriptions = json.load(f)
+    with open("data/processed/features.pkl", "rb") as f:
+        features = pickle.load(f)
+    with open("models/tokenizer.pkl", "rb") as f:
+        tokenizer = pickle.load(f)
+
+    test_image_ids = load_doc("data/raw/Flickr_8k.testImages.txt").split("\n")
+    test_ids = [img_id.split(".")[0] for img_id in test_image_ids if img_id.strip()]
+
+    max_length = 34
+
+    print("Loading model...")
+    model = load_model("models/best_model.h5")
+
+    print("Evaluating Model (Greedy)...")
+    greedy = evaluate_model(
+        model,
+        descriptions,
+        features,
+        tokenizer,
+        max_length,
+        test_ids,
+        beam_search=False,
+    )
+    print("Greedy Scores:", greedy)
+
+    output_file = "models/evaluation_metrics.json"
+    print(f"Saving evaluation metrics to {output_file}...")
+    with open(output_file, "w") as f:
+        json.dump({"greedy_search": greedy}, f, indent=4)
+
+
+if __name__ == "__main__":
+    main()

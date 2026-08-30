@@ -1,5 +1,5 @@
 import numpy as np
-from src.data.dataset import DataGenerator
+from src.models.data_generator import DataGenerator
 
 
 def test_data_generator(mocker):
